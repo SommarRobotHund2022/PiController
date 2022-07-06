@@ -22,11 +22,16 @@ MODES = [manual, auto, None, None]
 MODE = Modes.AUTO
 
 def bg():
+    global MODE
     while True:
-        cmd = sub_sock.recv().decode('utf-8').replace('MD:', '').strip().capitalize()
+        print("asdasdasasd")
+        cmd = sub_sock.recv().decode('utf-8').replace('MD:', '').strip().upper()
+        print(cmd)
         if cmd == Modes.MANUAL.name:
+            print("Switch manual")
             MODE = Modes.MANUAL
         elif cmd == Modes.AUTO.name:
+            print("Switch Auto")
             MODE = Modes.AUTO
 
 t = threading.Thread(target=bg, daemon=True )
@@ -34,6 +39,7 @@ t = threading.Thread(target=bg, daemon=True )
 def main():
     t.start()
     while True:
+        print("One run enabled")
         MODES[MODE.value].run()
     
 def open_serial(sc):

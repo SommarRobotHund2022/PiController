@@ -56,10 +56,8 @@ def run():
 
     if cmd is not None:
         print(cmd)
-        #req_sock.send_string(cmd)
-        oldKey = keyNumber 
-
-
+        req_sock.send_string(cmd)
+        req_sock.recv()
 
 if __name__ == "__main__":
     while True:
