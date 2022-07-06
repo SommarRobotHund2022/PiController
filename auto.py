@@ -30,7 +30,7 @@ lastCmd = Cmd.NOTHING
 
 def append_log():
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
         r = sub_sock.recv().decode('utf-8')
         sensorQueue.put(r)
 
@@ -65,48 +65,51 @@ def run():
         distanceForward = int(sensorQueue.get().split(":")[1])
         print("Forward distance: ", distanceForward)
         
-        if (distanceLeft > 20 and distanceRight > 20 and distanceForward >= 20 and lastCmd != Cmd.FORWARD):
+        if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
             req_sock.send_string("kwkF")
             req_sock.recv()
-            print("Should Walk Foward")
-            lastCmd = Cmd.FORWARD
-            time.sleep(2)
+            time.sleep(1.25)
 
-        elif(distanceLeft < 20 or distanceForward < 20 and lastCmd != Cmd.LEFT): # (distanceLeft < 20 or distanceForward < 15) and distanceRight > 20
+        elif(distanceLeft < 25 and distanceForward <= 25 and lastCmd != Cmd.LEFT):
             req_sock.send_string("kbkR")
             req_sock.recv()
             print("Should back Right")
             lastCmd = Cmd.LEFT
-            time.sleep(2)
+            time.sleep(1.25)
 
-        elif(distanceRight < 20 or distanceForward < 20 and lastCmd != Cmd.RIGHT):
+        elif(distanceRight < 25 and distanceForward < 25 and lastCmd != Cmd.RIGHT):
             req_sock.send_string("kbkL")
             req_sock.recv()
             print("Should back left")
             lastCmd = Cmd.RIGHT
-            time.sleep(2)
+            time.sleep(1.25)
 
-        elif(distanceRight < 20 and distanceLeft < 20 and distanceForward < 20 and lastCmd != Cmd.BACKWARD):
+        elif(distanceRight < 25 and distanceLeft < 25 and distanceForward < 25 and lastCmd != Cmd.BACKWARD):
             req_sock.send_string("kbk")
             req_sock.recv()
-            print("Should back Backwards")
             lastCmd = Cmd.BACKWARD
-            time.sleep(2)
-            
-        
-        for i in range(4):
+            time.sleep(1.25)
+
+        elif(distanceForward <= 25 and not lastCmd == Cmd.BACKWARD):
+            req_sock.send_string("kbkL")
+            req_sock.recv()
+            lastCmd = Cmd.BACKWARD
+            time.sleep(1.25)
+
+        for i in range(8):
             distanceForward = int(sensorQueue.get().split(":")[1])
-            if(distanceForward > 20 and not lastCmd == Cmd.FORWARD):
+            if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
                 req_sock.send_string("kwkF")
                 req_sock.recv()
-                print("Should walk Forward in loop ", i)
                 lastCmd = Cmd.FORWARD
-            elif distanceForward <= 20 and lastCmd != Cmd.BACKWARD:
+            elif distanceForward <= 25 and lastCmd != Cmd.BACKWARD:
                 req_sock.send_string("kbkL")
                 req_sock.recv()
-                print("Should back Backwards in loop ", i)
                 lastCmd = Cmd.BACKWARD
-            time.sleep(2)
+            time.sleep(1.25)
+            
+        # while not sensorQueue.empty():
+        #         sensorQueue.get()
 
             
         
