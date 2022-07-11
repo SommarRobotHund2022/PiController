@@ -5,7 +5,7 @@ import queue
 context = zmq.Context()
 
 sub_sock_server = context.socket(zmq.SUB)
-sub_sock_server.connect('tcp://*:2273')
+sub_sock_server.connect('tcp://192.168.137.1:2273')
 sub_sock_server.setsockopt(zmq.SUBSCRIBE, b'MD:')
 sub_sock_server.setsockopt(zmq.SUBSCRIBE, b'ST:')
 

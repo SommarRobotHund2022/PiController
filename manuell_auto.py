@@ -19,15 +19,20 @@ def bg():
     global MODE
     while True:
         if (not Queue_MD.empty()):
-            if Queue_MD.get == Modes.MANUAL.name:
+            if Queue_MD.get() == Modes.MANUAL.name:
                 MODE = Modes.MANUAL
-            elif Queue_MD.get == Modes.AUTO.name:
+            elif Queue_MD.get() == Modes.AUTO.name:
                 MODE = Modes.AUTO
 
+t1 = threading.Thread(target=bg, daemon=True)
 def main():
     t.start()
+    t1.start()
     while True:
         MODES[MODE.value].run()
 
 if __name__=='__main__':
     main()
+
+
+

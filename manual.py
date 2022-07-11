@@ -6,7 +6,7 @@ context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 req_sock.connect("tcp://127.0.0.1:2272")
 sub_sock = context.socket(zmq.SUB)
-sub_sock.connect("tcp://127.0.0.1:2273")
+sub_sock.connect("tcp://192.168.137.1:2273")
 sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'KC: ')
 
 
