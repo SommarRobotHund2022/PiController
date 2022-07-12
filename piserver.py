@@ -9,6 +9,9 @@ sub_sock_server.connect('tcp://192.168.137.1:2273')
 sub_sock_server.setsockopt(zmq.SUBSCRIBE, b'MD:')
 sub_sock_server.setsockopt(zmq.SUBSCRIBE, b'ST:')
 
+pub_sock_alerts = context.socket(zmq.PUB)
+pub_sock_alerts.connect('tcp://192.168.137.1:2274')
+
 
 Queue_MD = queue.Queue()
 Queue_ST = queue.Queue()

@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+from ast import NodeTransformer
 from enum import Enum
 import threading
 import zmq
 import time
 from queue import Queue, LifoQueue
-
+from piserver import pub_sock_alerts
 
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
@@ -18,6 +19,9 @@ sensorQueue = LifoQueue()
 distanceForward = 21
 distanceLeft = 21
 distanceRight = 21
+
+firstValue = None
+counter_alert = 0
 
 class Cmd(Enum):
     FORWARD = 0
@@ -40,6 +44,8 @@ t.start()
 def run():
     global lastCmd
     if not sensorQueue.empty():
+        firstValue = None
+        counter_alert = 0
         req_sock.send_string("kbalance")
         req_sock.recv()
         lastCmd = Cmd.NOTHING
@@ -98,6 +104,18 @@ def run():
 
         for i in range(8):
             distanceForward = int(sensorQueue.get().split(":")[1])
+
+            if (firstValue == None):
+                firstValue = distanceForward
+
+            if (firstValue != None & (distanceForward < firstValue-3 | distanceForward > firstValue+3)):
+                break
+            else:
+                counter_alert += 1
+
+            if counter_alert == 4:
+                pub_sock_alerts.send_string("AR: Im stuck!!!")
+
             if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
                 req_sock.send_string("kwkF")
                 req_sock.recv()
