@@ -12,14 +12,20 @@ sub_sock_server.setsockopt(zmq.SUBSCRIBE, b'ST:')
 
 Queue_MD = queue.Queue()
 Queue_ST = queue.Queue()
-
+lock = threading.Lock()
 def d():
     while True:
         r = sub_sock_server.recv().decode('utf-8')
+        print("Incoming message: " + r)
         if ("MD:" in r):
+            print("adding message to mode queue")
+            lock.acquire()
             Queue_MD.put(r.replace('MD:', '').strip().upper())
+            lock.release()
         elif ("ST:" in r):
+            lock.acquire()
             Queue_ST.put(r.replace('ST:', '').strip().upper())
+            lock.release()
         else:
             return
 
