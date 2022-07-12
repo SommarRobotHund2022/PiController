@@ -108,9 +108,8 @@ def run():
             if (firstValue == None):
                 firstValue = distanceForward
 
-            if (firstValue != None & (distanceForward < firstValue-3 | distanceForward > firstValue+3)):
-                break
-            else:
+            if (firstValue != None and (distanceForward >= firstValue-3 and distanceForward <= firstValue+3)):
+                print(counter_alert)
                 counter_alert += 1
 
             if counter_alert == 4:
