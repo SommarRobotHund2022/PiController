@@ -44,6 +44,8 @@ def run():
     global lastCmd
     global total_stuck
     if not sensorQueue.empty():
+        firstValue = None
+        counter_alert = 0
         req_sock.send_string("kbalance")
         req_sock.recv()
         lastCmd = Cmd.NOTHING
@@ -123,9 +125,9 @@ def run():
             if total_stuck < 3:
                 total_stuck += 1
         else:
-            if total_stuck > -1:
+            if total_stuck > 0:
                 total_stuck -= 1
-
+        print(total_stuck)
         if total_stuck >= 2:    
             pub_sock_alerts.send_string("Dog 1: stuck")
         else:
