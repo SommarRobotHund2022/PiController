@@ -20,8 +20,7 @@ distanceForward = 21
 distanceLeft = 21
 distanceRight = 21
 
-firstValue = None
-counter_alert = 0
+total_stuck = 0
 
 class Cmd(Enum):
     FORWARD = 0
@@ -43,9 +42,8 @@ t.start()
 
 def run():
     global lastCmd
+    global total_stuck
     if not sensorQueue.empty():
-        firstValue = None
-        counter_alert = 0
         req_sock.send_string("kbalance")
         req_sock.recv()
         lastCmd = Cmd.NOTHING
@@ -109,11 +107,7 @@ def run():
                 firstValue = distanceForward
 
             if (firstValue != None and (distanceForward >= firstValue-3 and distanceForward <= firstValue+3)):
-                print(counter_alert)
                 counter_alert += 1
-
-            if counter_alert == 4:
-                pub_sock_alerts.send_string("AR: Im stuck!!!")
 
             if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
                 req_sock.send_string("kwkF")
@@ -124,7 +118,18 @@ def run():
                 req_sock.recv()
                 lastCmd = Cmd.BACKWARD
             time.sleep(1.25)
-            
+
+        if counter_alert >= 4:
+            if total_stuck < 3:
+                total_stuck += 1
+        else:
+            if total_stuck > -1:
+                total_stuck -= 1
+
+        if total_stuck >= 2:    
+            pub_sock_alerts.send_string("Dog 1: stuck")
+        else:
+            pub_sock_alerts.send_string("Dog 1: Operational")
         # while not sensorQueue.empty():
         #         sensorQueue.get()
 
