@@ -10,9 +10,9 @@ from piserver import pub_sock_alerts
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 sub_sock = context.socket(zmq.SUB)
-sub_sock.connect('tcp://127.0.0.1:2271')
+sub_sock.connect('tcp://192.168.137.71:2271')
 req_sock.connect("tcp://127.0.0.1:2272")
-sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'distance is')
+sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'D1: distance is :')
 
 sensorQueue = LifoQueue()
 # Default value
@@ -54,21 +54,21 @@ def run():
         req_sock.send_string("m0 -75")
         req_sock.recv() 
         time.sleep(2)
-        distanceRight = int(sensorQueue.get().split(":")[1])
+        distanceRight = int(sensorQueue.get().split(":")[2])
         print("Right distance: ", distanceRight)
         
         #Vrid huvudet åt vänster och kolla ultraljudsensor.
         req_sock.send_string("m0 75")
         req_sock.recv()
         time.sleep(2)
-        distanceLeft = int(sensorQueue.get().split(":")[1])
+        distanceLeft = int(sensorQueue.get().split(":")[2])
         print("Left distance: ", distanceLeft)
 
         #Vrid huvudet fram och kolla ultraljudsensor
         req_sock.send_string("m0 0")
         req_sock.recv()
         time.sleep(2)
-        distanceForward = int(sensorQueue.get().split(":")[1])
+        distanceForward = int(sensorQueue.get().split(":")[2])
         print("Forward distance: ", distanceForward)
         
         if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
@@ -103,7 +103,7 @@ def run():
             time.sleep(1.25)
 
         for i in range(8):
-            distanceForward = int(sensorQueue.get().split(":")[1])
+            distanceForward = int(sensorQueue.get().split(":")[2])
 
             if (firstValue == None):
                 firstValue = distanceForward
@@ -129,9 +129,9 @@ def run():
                 total_stuck -= 1
         print(total_stuck)
         if total_stuck >= 2:    
-            pub_sock_alerts.send_string("Dog 1: stuck")
+            pub_sock_alerts.send_string("D1: Stuck")
         else:
-            pub_sock_alerts.send_string("Dog 1: Operational")
+            pub_sock_alerts.send_string("D1: Operational")
         # while not sensorQueue.empty():
         #         sensorQueue.get()
 
