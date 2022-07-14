@@ -10,7 +10,7 @@ from piserver import pub_sock_alerts
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 sub_sock = context.socket(zmq.SUB)
-sub_sock.connect('tcp://192.168.137.71:2271')
+sub_sock.connect('tcp://192.168.137.1:2276')
 req_sock.connect("tcp://127.0.0.1:2272")
 sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'D1: distance is :')
 
