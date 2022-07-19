@@ -5,14 +5,14 @@ import threading
 import zmq
 import time
 from queue import Queue, LifoQueue
-from piserver import pub_sock_alerts
+from piserver import pub_sock_alerts, dog, socket
 
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 sub_sock = context.socket(zmq.SUB)
-sub_sock.connect('tcp://192.168.137.1:2276')
+sub_sock.connect(socket['socket'] + '2276')
 req_sock.connect("tcp://127.0.0.1:2272")
-sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'D1: distance is :')
+sub_sock.setsockopt_string(zmq.SUBSCRIBE, dog['dog'] + ' distance is :')
 
 sensorQueue = LifoQueue()
 # Default value
@@ -129,9 +129,9 @@ def run():
                 total_stuck -= 1
         print(total_stuck)
         if total_stuck >= 2:    
-            pub_sock_alerts.send_string("D1: Stuck")
+            pub_sock_alerts.send_string(dog['dog'] + " Stuck")
         else:
-            pub_sock_alerts.send_string("D1: Operational")
+            pub_sock_alerts.send_string(dog['dog'] + " Operational")
         # while not sensorQueue.empty():
         #         sensorQueue.get()
 

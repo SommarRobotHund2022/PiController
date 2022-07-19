@@ -1,19 +1,20 @@
 import webbrowser
 import zmq
+from piserver import dog, socket
 #Kommunikation med Webb import
 
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 req_sock.connect("tcp://127.0.0.1:2272")
 sub_sock = context.socket(zmq.SUB)
-sub_sock.connect("tcp://192.168.137.1:2273")
-sub_sock.setsockopt_string(zmq.SUBSCRIBE, 'D1: KC: ')
+sub_sock.connect(socket['socket'] + '2273')
+sub_sock.setsockopt_string(zmq.SUBSCRIBE, dog['dog'] + ' KC: ')
 
 
 def get_key():
     #Implementera senare, tar emot keycode signal fran webben och konverterar till keyNumber
     msg = sub_sock.recv().decode('utf-8')
-    msg = msg.replace('D1:', '')
+    msg = msg.replace(dog['dog'], '')
     return int(msg.replace('KC: ', ''))
 
 

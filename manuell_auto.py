@@ -4,7 +4,7 @@ import auto
 import manual
 import zmq
 PORT = "/dev/ttyS0"
-from piserver import Queue_MD, Queue_ST, t
+from piserver import Queue_MD, t
 
 class Modes(Enum):
     MANUAL = 0
