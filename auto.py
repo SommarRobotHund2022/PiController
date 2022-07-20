@@ -5,7 +5,7 @@ import threading
 import zmq
 import time
 from queue import Queue, LifoQueue
-from piserver import pub_sock_alerts, dog, socket
+from pisockets import pub_sock_alerts, dog, socket
 
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)

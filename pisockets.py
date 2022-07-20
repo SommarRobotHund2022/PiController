@@ -23,7 +23,9 @@ Queue_MD = queue.Queue()
 
 def d():
     while True:
+        print("hello")
         r = sub_sock_server.recv().decode('utf-8')
+        print(r)
         if ("MD:" in r):
             r = r.replace(dog['dog'], '')
             Queue_MD.put(r.replace('MD:', '').strip().upper())

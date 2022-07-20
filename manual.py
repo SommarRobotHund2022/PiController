@@ -1,6 +1,6 @@
 import webbrowser
 import zmq
-from piserver import dog, socket
+from pisockets import dog, socket
 #Kommunikation med Webb import
 
 context = zmq.Context()

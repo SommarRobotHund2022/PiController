@@ -4,7 +4,7 @@ import auto
 import manual
 import zmq
 PORT = "/dev/ttyS0"
-from piserver import Queue_MD, t
+from pisockets import Queue_MD, t
 
 class Modes(Enum):
     MANUAL = 0
@@ -19,11 +19,13 @@ def bg():
     global MODE
     while True:
         if (not Queue_MD.empty()):
-            
+            print("entered queue") 
             mode = Queue_MD.get()
             if mode == Modes.MANUAL.name:
+                print("enter manual mode")
                 MODE = Modes.MANUAL
             elif mode == Modes.AUTO.name:
+                print("enter auto mode")
                 MODE = Modes.AUTO
 
 t1 = threading.Thread(target=bg, daemon=True)
