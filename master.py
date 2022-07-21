@@ -30,7 +30,8 @@ def bg():
         elif (not Queue_ST.empty()):
             # We dont really care about the value in the queue, its just to see if a new swap has been made by the webapp, and if it has it returns what mode this dog currently is in
             Queue_ST.get()
-            pub_sock_alerts.send_string(dog['dog'] + MODE.name)
+            if (MODE != None):
+                pub_sock_alerts.send_string(dog['dog'] + MODE.name)
 
 t1 = threading.Thread(target=bg, daemon=True)
 def main():
