@@ -7,6 +7,8 @@ import time
 from queue import Queue, LifoQueue
 from pisockets import pub_sock_alerts, dog, socket
 
+SLEEPTIMER = 1
+
 context = zmq.Context()
 req_sock = context.socket(zmq.REQ)
 sub_sock = context.socket(zmq.SUB)
@@ -35,14 +37,17 @@ def append_log():
     while True:
         time.sleep(0.5)
         r = sub_sock.recv().decode('utf-8')
+        print(r)
         sensorQueue.put(r)
 
 t = threading.Thread(target=append_log, daemon=True )
 t.start()
 
 def run():
+    print("hello")
     global lastCmd
     global total_stuck
+
     if not sensorQueue.empty():
         firstValue = None
         counter_alert = 0
@@ -50,6 +55,9 @@ def run():
         req_sock.recv()
         lastCmd = Cmd.NOTHING
 
+
+        req_sock.send_string("ksit")
+        req_sock.recv()
         # Vrid huvudet at hoger och kolla ultraljudsensor.
         req_sock.send_string("m0 -75")
         req_sock.recv() 
@@ -71,6 +79,11 @@ def run():
         distanceForward = int(sensorQueue.get().split(":")[2])
         print("Forward distance: ", distanceForward)
         
+        req_sock.send_string("kbalance")
+        req_sock.recv()
+        time.sleep(2)
+
+
         if(distanceForward > 25 and not lastCmd == Cmd.FORWARD):
             req_sock.send_string("kwkF")
             req_sock.recv()
@@ -102,7 +115,7 @@ def run():
             lastCmd = Cmd.BACKWARD
             time.sleep(1.25)
 
-        for i in range(8):
+        for i in range(12):
             distanceForward = int(sensorQueue.get().split(":")[2])
 
             if (firstValue == None):
@@ -126,7 +139,7 @@ def run():
                 total_stuck += 1
         else:
             if total_stuck > 0:
-                total_stuck -= 1
+                total_stuck -= 2
         print(total_stuck)
         if total_stuck >= 2:    
             pub_sock_alerts.send_string(dog['dog'] + " Stuck")
@@ -138,6 +151,7 @@ def run():
             
         
 if __name__== "__main__":
+    req_socket.send_string("kwkF")
     while True:
         try:
             run()
